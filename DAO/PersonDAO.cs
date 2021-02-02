@@ -1,3 +1,4 @@
+using System;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using ProjectJ4s.Models;
@@ -28,8 +29,32 @@ namespace ProjectJ4s.DAO
             }
             catch(MongoException e)
             {
-                throw new MongoException(e.Message);
+                return null;
             }  
+        }
+        public Person edit(Person person)
+        {
+            try
+            {
+                this.Tabela.ReplaceOne(d => d.Id == person.Id, person);
+                return person;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return null;
+            }
+        }
+        public bool delete(Person person)
+        {
+            try
+            {
+                this.Tabela.DeleteOne(d => d.Id == person.Id);
+            }
+            catch(Exception e)
+            {
+                return false;
+            }
+            return true;
         }
         public List<Person> listall(params int[] param)
         {

@@ -1,8 +1,8 @@
 using System;
 using ProjectJ4s.DAO;
 using ProjectJ4s.Models;
-using MongoDB.Bson;
 using System.Collections.Generic;
+using ProjectJ4s.Middlewares;
 
 namespace ProjectJ4s.Controllers
 {
@@ -12,21 +12,19 @@ namespace ProjectJ4s.Controllers
         public PersonController(){
             this.personDAO = new PersonDAO();
         }
-        public void  add (string name, string dateBirth)
+        public String add (string name, string dateBirth)
         {
-            string [] dateFormat = dateBirth.Split('/');
-            DateTime dateFinal;
-            try
+            Person person = new PersonMiddleware().ValidadeDataPerson(name, dateBirth);
+            if (person == null)
             {
-                dateFinal = new DateTime(day: Convert.ToInt32(dateFormat[0]), 
-                                                month: Convert.ToInt32(dateFormat[1]),
-                                                 year: Convert.ToInt32(dateFormat[2]));
+                return "dados invalidos, tente novamente!";
             }
-            catch(Exception e)
+            
+            if (this.personDAO.add(person) == null)
             {
-                throw new Exception(e.Message);
-            } 
-            personDAO.add(new Person(name, dateFinal));     
+                return "erro ao cadastrar! tento novamente mais tarde.";
+            }
+            return "Cadastrado com sucesso!";
         }
         public List<Person> list (params int[] param)
         {
@@ -38,11 +36,38 @@ namespace ProjectJ4s.Controllers
         }
         public Person GetOne(string id)
         {
-            return this.personDAO.GetOne(id);            
+            return new PersonMiddleware().ValidadeId(id);
         }
         public int GetTotalPages(int perpage){
-            decimal a = personDAO.GetTotal() / perpage;
-            return (int) Math.Ceiling(a);
+            double a = (double)personDAO.GetTotal() / (double)perpage;
+            return (int)Math.Ceiling(a);
+        }
+        public string edit(string name, string dateBirth, Person person)
+        {
+           person = new PersonMiddleware().ValidadeDataPerson(name, dateBirth, person);
+            if (person == null)
+            {
+                return "dados invalidos, tente novamente!";
+            }
+
+            if (this.personDAO.edit(person) == null)
+            {
+                return "erro ao editar! tento novamente mais tarde.";
+            }
+            return "Editado com sucesso!";
+        }
+        public string delete(string id)
+        {
+            Person person = new PersonMiddleware().ValidadeId(id);
+            if (person == null)
+            {
+                return "Pessoa não encontrada!";
+            }
+            if (!this.personDAO.delete(person))
+            {
+                return "Erro ao deletar! tente novamente mais tarde.";
+            }
+            return "Deletado com sucesso";
         }
     }
 }

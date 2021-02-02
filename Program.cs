@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
@@ -35,10 +36,10 @@ namespace ProjectJ4s
                         list();
                     break;
                 case menu1.Editar:
-                    Console.WriteLine("editando");
+                        edit();
                     break;
                 case menu1.Deletar:
-                    Console.WriteLine("deletando");
+                        delete();
                     break;
                 case menu1.Sair:
                 Console.WriteLine("Até a proxima");
@@ -61,8 +62,7 @@ namespace ProjectJ4s
             string name = Console.ReadLine();
             Console.WriteLine("Digite sua data de nascimento separado por barra. Ex. dd/mm/aaaa");
             string dateBirth = Console.ReadLine();
-            pc.add(name, dateBirth);
-            Console.WriteLine("Cadastrado com sucesso!");
+            Console.WriteLine(pc.add(name, dateBirth));
         }
         public static void listAll(int perpage, int page)
         {
@@ -75,7 +75,7 @@ namespace ProjectJ4s
                 Console.WriteLine($"Id: {p.Id} - Nome: {p.Name} - Data de Nascimento: {p.dateBirth.ToString("dd/MM/yyyy")}");
             }
             Console.WriteLine("=======End List=======");
-            if(page == 1 && perpage > peaple.Count)
+            if(pc.GetTotalPages(perpage)  == 1)
             {
                 return;
             }
@@ -115,9 +115,8 @@ namespace ProjectJ4s
             int op = 0;
             do
             {
-                Console.WriteLine("1-lis9tar todos\n2-Buscar pessoa\n9-sair");
+                Console.WriteLine("1-listar todos\n2-Buscar pessoa\n9-sair");
                 int.TryParse(Console.ReadLine(), out op);
-                Console.WriteLine(op);
                 switch(op){
                 case 1:
                     Console.WriteLine("digite a quantidede por pagina");
@@ -145,13 +144,41 @@ namespace ProjectJ4s
             Console.WriteLine("Digite o id");
             string id = Console.ReadLine();
             Person person = pc.GetOne(id);
-            Console.WriteLine($"=========Buscando id:{person}");
-            if(person.Id.Equals("0"))
+            Console.WriteLine($"=========Buscando id:{id}");
+            if(person == null)
             {
                 Console.WriteLine("pessoa não encotrada");
+                Console.WriteLine("======= Fim Lista =======");
+                return;
             }
-            Console.WriteLine($"Id: {person.Id} - Nome: {person.Name} - Data de Nascimento: {person.dateBirth.ToString("dd/MM/yyyy")}");
-            Console.WriteLine("======= Fim Lista =======");
+                Console.WriteLine($"Id: {person.Id} - Nome: {person.Name} - Data de Nascimento: {person.dateBirth.ToString("dd/MM/yyyy")}");
+                Console.WriteLine("======= Fim Lista ======="); 
+        }
+        public static void edit()
+        {
+            PersonController pc = new PersonController();
+            Console.WriteLine("Digite o  Id de que deseja editar");
+            string id = Console.ReadLine();
+            Person person = pc.GetOne(id);
+            if (person == null)
+            {
+                Console.WriteLine("pessoa não encotrada");
+                Console.WriteLine("======================");
+                return;
+            }
+            Console.WriteLine("Digite o novo nome");
+            string name = Console.ReadLine();
+            Console.WriteLine("Digite a nova data de nascimento");
+            string date = Console.ReadLine();
+            Console.WriteLine(pc.edit(name, date, person));
+
+        }
+        public static void delete()
+        {
+            PersonController pc = new PersonController();
+            Console.WriteLine("Digite o  Id de que deseja deletar");
+            string id = Console.ReadLine();
+            Console.WriteLine(pc.delete(id));
         }
         /*public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
