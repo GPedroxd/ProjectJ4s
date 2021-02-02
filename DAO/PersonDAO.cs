@@ -42,7 +42,21 @@ namespace ProjectJ4s.DAO
                 throw new MongoException(e.Message);
             }
         }
-        public int GetTotal(){
+        public Person GetOne(string id)
+        {
+            try
+            {
+                return this.Tabela.Find(a => a.Id == id).Single();
+            }
+            catch(MongoException e)
+            {
+                Person error = new Person();
+                error.Id = "0";
+                return error;
+            }
+        }
+        public int GetTotal()
+        {
             return this.Tabela.Find( a => true).ToList().Count;
         }
     }

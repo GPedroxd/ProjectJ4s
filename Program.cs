@@ -32,9 +32,7 @@ namespace ProjectJ4s
                     add();
                     break;
                 case menu1.Listar:
-                    Console.WriteLine("Digite a quantidade por pagina");
-                    int.TryParse(Console.ReadLine(), out int perpage1);
-                    list(perpage1, 1);
+                        list();
                     break;
                 case menu1.Editar:
                     Console.WriteLine("editando");
@@ -66,9 +64,8 @@ namespace ProjectJ4s
             pc.add(name, dateBirth);
             Console.WriteLine("Cadastrado com sucesso!");
         }
-        public static void list(int perpage, int page)
+        public static void listAll(int perpage, int page)
         {
-
             PersonController pc = new PersonController();
             string menu = "9-Sair\t1-Proxima";
             List<Person> peaple = pc.list(perpage, page);
@@ -112,13 +109,55 @@ namespace ProjectJ4s
                     page--;
                 }
             }
-            list(perpage: perpage, page: page);
+            listAll(perpage: perpage, page: page);
         }
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        public static void list(){
+            int op = 0;
+            do
+            {
+                Console.WriteLine("1-lis9tar todos\n2-Buscar pessoa\n9-sair");
+                int.TryParse(Console.ReadLine(), out op);
+                Console.WriteLine(op);
+                switch(op){
+                case 1:
+                    Console.WriteLine("digite a quantidede por pagina");
+                    int.TryParse(Console.ReadLine(), out int o);
+                        if(o == 0)
+                        {
+                            listAll(4, 1);
+                        }
+                        listAll(o, 1);
+                    break;
+                case 2:
+                    GetOne();
+                    break;
+                case 9:
+                    continue;
+                case 0:
+                    break;
+            }
+            }while(op != 9);
+            
+        }
+        public static void GetOne()
+        {
+            PersonController pc = new PersonController();
+            Console.WriteLine("Digite o id");
+            string id = Console.ReadLine();
+            Person person = pc.GetOne(id);
+            Console.WriteLine($"=========Buscando id:{person}");
+            if(person.Id.Equals("0"))
+            {
+                Console.WriteLine("pessoa não encotrada");
+            }
+            Console.WriteLine($"Id: {person.Id} - Nome: {person.Name} - Data de Nascimento: {person.dateBirth.ToString("dd/MM/yyyy")}");
+            Console.WriteLine("======= Fim Lista =======");
+        }
+        /*public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                });*/
     }
 }
