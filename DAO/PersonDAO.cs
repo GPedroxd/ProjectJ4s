@@ -1,88 +1,42 @@
-using System;
+using ProjectJ4s.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
-using ProjectJ4s.Models;
+using System.Linq;
+using ProjectJ4s.DAO;
+
 namespace ProjectJ4s.DAO
 {
-    public class PersonDAO 
+    public class PersonDAO
     {
-        MongoClient Client { get; set; }
-        IMongoDatabase DataBase { get; set; }
-        IMongoCollection <Person> Tabela { get; set;} 
-        public PersonDAO()
+        private readonly IMongoCollection<Person> _peaple;
+
+        public PersonDAO(IBookstoreDatabaseSettings settings)
         {
-            try{
-                this.Client = Connection.connect();
-                this.DataBase =  this.Client.GetDatabase("ProjectJ4s");
-                this.Tabela = this.DataBase.GetCollection<Person>("person");
-            }
-            catch(MongoException e)
-            {
-                throw new MongoException(e.Message);
-            }
+            var client = new MongoClient(settings.ConnectionString);
+            var database = client.GetDatabase(settings.DatabaseName);
+
+            _peaple = database.GetCollection<Person>("person");
         }
-        public PersonDAO add(Person person)
+
+        public List<Person> Get() =>
+            _peaple.Find(person => true).ToList();
+
+        public Person Get(string id) =>
+            _peaple.Find<Person>(person => person.Id == id).SingleOrDefault();
+
+        public Person Create(Person person)
         {
-            try{
-                this.Tabela.InsertOne(person);
-                return this;
-            }
-            catch(MongoException e)
-            {
-                return null;
-            }  
+            _peaple.InsertOneAsync(person);
+            return person;
         }
-        public Person edit(Person person)
-        {
-            try
-            {
-                this.Tabela.ReplaceOne(d => d.Id == person.Id, person);
-                return person;
-            }catch(Exception e)
-            {
-                Console.WriteLine(e.Message);
-                return null;
-            }
-        }
-        public bool delete(Person person)
-        {
-            try
-            {
-                this.Tabela.DeleteOne(d => d.Id == person.Id);
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
-            return true;
-        }
-        public List<Person> listall(params int[] param)
-        {
-            try
-            {
-                return this.Tabela.Find(pp => true).Skip(param[1]).Limit(param[0]).ToList();
-            } 
-            catch(MongoException e)
-            {
-                throw new MongoException(e.Message);
-            }
-        }
-        public Person GetOne(string id)
-        {
-            try
-            {
-                return this.Tabela.Find(a => a.Id == id).Single();
-            }
-            catch(MongoException e)
-            {
-                Person error = new Person();
-                error.Id = "0";
-                return error;
-            }
-        }
-        public int GetTotal()
-        {
-            return this.Tabela.Find( a => true).ToList().Count;
-        }
+
+        public void Update(string id, Person person) =>
+            _peaple.ReplaceOneAsync(book => person.Id == id, person);
+
+        public void Remove(Person person) =>
+            _peaple.DeleteOneAsync(person => person.Id == person.Id);
+
+        public void Remove(string id) =>
+            _peaple.DeleteOne(person => person.Id == id);
     }
 }

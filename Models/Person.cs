@@ -12,11 +12,11 @@ namespace ProjectJ4s.Models
         [BsonElement("name")]
         public string Name { get; set; }
         [BsonElement("dateBirth")]
-        public DateTime dateBirth { get; set;}
+        public DateTime DateBirth { get; set;}
 
         public Person(String name, DateTime dateBirth)
         {
-            this.dateBirth = dateBirth;
+            this.DateBirth = dateBirth;
             this.Name = name;
         }
         public Person(){
