@@ -2,19 +2,21 @@ using System;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using ProjectJ4s.Models;
+using ProjectJ4s.DAO.Interfaces;
+
 namespace ProjectJ4s.DAO
 {
-    public class PersonDAO 
+    public class PersonDAO : IDAO
     {
         MongoClient Client { get; set; }
         IMongoDatabase DataBase { get; set; }
-        IMongoCollection <Person> Tabela { get; set;} 
-        public PersonDAO()
+        readonly IMongoCollection<Person> _Colletion; 
+        public PersonDAO(IProjectJ4sDatabaseSettings settings)
         {
             try{
-                this.Client = Connection.connect();
-                this.DataBase =  this.Client.GetDatabase("ProjectJ4s");
-                this.Tabela = this.DataBase.GetCollection<Person>("person");
+                this.Client = Connection.connect(settings.ConnectionString);
+                this.DataBase =  this.Client.GetDatabase(settings.DatabaseName);
+                this._Colletion = this.DataBase.GetCollection<Person>("person");
             }
             catch(MongoException e)
             {
@@ -24,7 +26,7 @@ namespace ProjectJ4s.DAO
         public Person add(Person person)
         {
             try{
-                this.Tabela.InsertOne(person);
+                this._Colletion.InsertOne(person);
                 return person;
             }
             catch(MongoException e)
@@ -37,7 +39,7 @@ namespace ProjectJ4s.DAO
         {
             try
             {
-                this.Tabela.ReplaceOne(d => d.Id == person.Id, person);
+                this._Colletion.ReplaceOne(d => d.Id == person.Id, person);
                 return person;
             }catch(Exception e)
             {
@@ -49,7 +51,7 @@ namespace ProjectJ4s.DAO
         {
             try
             {
-                this.Tabela.DeleteOne(d => d.Id == person.Id);
+                this._Colletion.DeleteOne(d => d.Id == person.Id);
             }
             catch(Exception e)
             {
@@ -62,7 +64,7 @@ namespace ProjectJ4s.DAO
         {
             try
             {
-                return this.Tabela.Find(pp => true).Skip(param[1]).Limit(param[0]).ToList();
+                return this._Colletion.Find(pp => true).Skip(param[1]).Limit(param[0]).ToList();
             } 
             catch(MongoException e)
             {
@@ -74,7 +76,7 @@ namespace ProjectJ4s.DAO
         {
             try
             {
-                return this.Tabela.Find(a => a.Id == id).Single();
+                return this._Colletion.Find(a => a.Id == id).Single();
             }
             catch(MongoException e)
             {
@@ -84,7 +86,7 @@ namespace ProjectJ4s.DAO
         }
         public int GetTotal()
         {
-            return this.Tabela.Find( a => true).ToList().Count;
+            return this._Colletion.Find( a => true).ToList().Count;
         }
     }
 }

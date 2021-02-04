@@ -20,10 +20,10 @@ namespace ProjectJ4s.Controllers
         PersonMiddleware PersonMiddleware { get; }
 
 
-        public PersonController()
+        public PersonController(PersonDAO person)
         {
-            PersonDAO = new PersonDAO();
-            PersonMiddleware = new PersonMiddleware();
+            PersonDAO = person;
+            PersonMiddleware = new PersonMiddleware(PersonDAO);
 
         }
 
@@ -80,10 +80,10 @@ namespace ProjectJ4s.Controllers
         {
             if(pageSize <= 0)
             {
-                return ???
+                return StatusCode(204);
             }
 
-            var paging = new PagingMiddleware().List(pageSize, currentPage);
+            var paging = new PagingMiddleware(PersonDAO).List(pageSize, currentPage);
             if (paging == default)
             {
                 return Ok("Nothing register found");

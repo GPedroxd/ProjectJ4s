@@ -1,4 +1,4 @@
-﻿namespace ProjectJ4s.DAO
+﻿namespace ProjectJ4s.DAO.Interfaces
 {
     public interface IProjectJ4sDatabaseSettings
     {

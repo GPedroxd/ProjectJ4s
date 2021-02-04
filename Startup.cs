@@ -10,7 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
+using ProjectJ4s.DAO;
+using ProjectJ4s.DAO.Interfaces;
 
 namespace ProjectJ4s
 {
@@ -26,7 +29,13 @@ namespace ProjectJ4s
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.Configure<ProjectJ4sDatabaseSettings>(Configuration.GetSection(
+                    nameof(ProjectJ4sDatabaseSettings)
+                ));
+            services.AddSingleton<IProjectJ4sDatabaseSettings>(sp => 
+                sp.GetRequiredService<IOptions<ProjectJ4sDatabaseSettings>>
+            ().Value);
+            services.AddSingleton<PersonDAO>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {

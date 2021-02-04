@@ -10,9 +10,9 @@ namespace ProjectJ4s.Middlewares
     {
         PersonDAO personDAO;
 
-        public PersonMiddleware()
+        public PersonMiddleware(PersonDAO personDAO)
         {
-            this.personDAO = new PersonDAO();
+            this.personDAO = personDAO;
         }
         public Person ValidadeDataPerson(string name, string dateBirth)
         {

@@ -10,10 +10,10 @@ namespace ProjectJ4s.Middlewares
         public PersonDAO PersonDAO { get; set; }
         public Paging Paging { get; set; }
 
-        public PagingMiddleware()
+        public PagingMiddleware(PersonDAO personDAO)
         {
             Paging = new Paging();
-            PersonDAO = new PersonDAO();
+            PersonDAO = personDAO;
         }
 
         public Paging List(int pageSize, int currentPage)

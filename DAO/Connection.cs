@@ -4,12 +4,11 @@ namespace ProjectJ4s.DAO
 {
     public static class Connection 
     {
-        static MongoClient client { get; set; }
-        public static MongoClient connect()
+        public static MongoClient connect(string connection)
         {
             
             try{
-                return  new MongoClient("mongodb+srv://gpedroxd:pcZZ3a9K1jk8gfbj@cluster0.0zszt.mongodb.net/");
+                return  new MongoClient(connection);
             }
             catch(MongoException e)
             {
