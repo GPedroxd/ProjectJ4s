@@ -7,10 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 using ProjectJ4s.Models;
 using ProjectJ4s.DAO;
 using ProjectJ4s.Middlewares;
+using System.Collections.ObjectModel;
 
 namespace ProjectJ4s.Controllers
 {
-    [Route("api/[Controller]")]
+    [Route("api/[Controller]/[Action]")]
     [ApiController]
     public class PersonController : ControllerBase
 
@@ -27,35 +28,69 @@ namespace ProjectJ4s.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> add (string name, string dateBirth)
+        public async Task<ActionResult> CreateOrUpdate(string name, string dateBirth, string id = "")
         {
-            var person = this.PersonMiddleware.ValidadeDataPerson(name, dateBirth);
-            if(person == default)
+            Person person;
+            if (id.Equals(""))
             {
-                return StatusCode(500); 
+                person = this.PersonMiddleware.ValidadeDataPerson(name, dateBirth);
+                if (person == default)
+                {
+                    return StatusCode(500, "Wrong Data!");
+                }
+                person = this.PersonDAO.add(person);
+                if (person == default)
+                {
+                    return StatusCode(500, "Database error conection!");
+                }
+                return Ok();
             }
-            person = this.PersonDAO.add(person);
-            if(person == default)
+            person = this.PersonMiddleware.ValidateId(id);
+            if (person == default)
             {
-                return StatusCode(500);
+                return StatusCode(500, "Invalid Id!");
+            }
+            person = this.PersonMiddleware.ValidadeDataPerson(dateBirth: dateBirth, person: person, name: name);
+            if (person == default)
+            {
+                return StatusCode(500, "Person not found!");
+            }
+            person = this.PersonDAO.edit(person);
+            if (person == default)
+            {
+                return StatusCode(500, "Database error conection!");
             }
             return Ok();
         }
-        //public List<Person> list (params int[] param)
-        //{
-            
-        //}
-        //public Person GetOne(string id)
-        //{
-            
-        //}
-        //public int GetTotalPages(int perpage){
-            
-        //}
-        //public string edit(string name, string dateBirth, Person person)
-        //{
-            
-        //}
+        
+        [HttpGet("{id}")]        
+        public async Task<ActionResult> GetOne(string id)
+        {
+            var person = PersonMiddleware.ValidateId(id);
+            if(person == default)
+            {
+                return StatusCode(500, "Person not found!");
+            }
+            return Ok(person);
+        }
+
+        [HttpPost()]
+
+        public async Task<ActionResult> List(int pageSize, int currentPage)
+        {
+            if(pageSize <= 0)
+            {
+                return ???
+            }
+
+            var paging = new PagingMiddleware().List(pageSize, currentPage);
+            if (paging == default)
+            {
+                return Ok("Nothing register found");
+            }
+
+            return Ok(paging);
+        }
         //public string delete(string id)
         //{
             

@@ -7,8 +7,7 @@ namespace ProjectJ4s.DAO
         static MongoClient client { get; set; }
         public static MongoClient connect()
         {
-            //mongodb://127.0.0.1:27017/
-            //mongodb+srv://gpedroxd:BrKPzxKUlU4euCjf@cluster0.0zszt.mongodb.net/?retryWrites=true&w=majority
+            
             try{
                 return  new MongoClient("mongodb+srv://gpedroxd:pcZZ3a9K1jk8gfbj@cluster0.0zszt.mongodb.net/");
             }

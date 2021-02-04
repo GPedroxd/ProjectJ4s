@@ -18,7 +18,7 @@ namespace ProjectJ4s.DAO
             }
             catch(MongoException e)
             {
-                throw new MongoException(e.Message);
+                Console.WriteLine(e.Message);
             }
         }
         public Person add(Person person)
@@ -29,6 +29,7 @@ namespace ProjectJ4s.DAO
             }
             catch(MongoException e)
             {
+                Console.WriteLine(e.Message);
                 return null;
             }  
         }
@@ -52,11 +53,12 @@ namespace ProjectJ4s.DAO
             }
             catch(Exception e)
             {
+                Console.WriteLine(e.Message);
                 return false;
             }
             return true;
         }
-        public List<Person> listall(params int[] param)
+        public List<Person> ListAll(params int[] param)
         {
             try
             {
@@ -64,7 +66,8 @@ namespace ProjectJ4s.DAO
             } 
             catch(MongoException e)
             {
-                throw new MongoException(e.Message);
+                Console.WriteLine(e.Message);
+                return null;
             }
         }
         public Person GetOne(string id)
@@ -75,9 +78,8 @@ namespace ProjectJ4s.DAO
             }
             catch(MongoException e)
             {
-                Person error = new Person();
-                error.Id = "0";
-                return error;
+                Console.WriteLine(e.Message);
+                return null;
             }
         }
         public int GetTotal()

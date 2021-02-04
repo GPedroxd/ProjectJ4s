@@ -24,14 +24,12 @@ namespace ProjectJ4s.Middlewares
             }
             person.Name = name.Trim();
             dateBirth = dateBirth.Trim();
-            string formart = "dd/MM/yyyy";
-            if (!DateTime.TryParseExact(dateBirth, formart, new CultureInfo("pt-br"),
-                                                DateTimeStyles.None, out _))
+            var dt = ValidateData(dateBirth);
+            if(dt == default)
             {
                 return null;
             }
-            person.dateBirth =  DateTime.Parse(dateBirth);
-
+            person.dateBirth = dt;
             return person;
         }
         public Person ValidadeDataPerson(string name, string dateBirth, Person person)
@@ -41,24 +39,38 @@ namespace ProjectJ4s.Middlewares
             {
                 return null;
             }
-            person.Name = name; string formart = "dd/MM/yyyy";
-            if (!DateTime.TryParseExact(dateBirth, formart, new CultureInfo("pt-br"),
-                                                DateTimeStyles.None, out _))
+            person.Name = name;
+            var dt = ValidateData(dateBirth);
+            if (dt == default)
             {
                 return null;
             }
-            person.dateBirth = DateTime.Parse(dateBirth);
-
+            person.dateBirth = dt;
             return person;
         }
 
-        public Person ValidadeId(string id)
-        {
+        public Person ValidateId(string id)
+        {   
             if (!ObjectId.TryParse(id, out _))
             {
                 return null;
             }
             return this.personDAO.GetOne(id);
+        }
+
+        public DateTime ValidateData(string date)
+        {
+            string format = "dd/MM/yyyy";
+            if(!DateTime.TryParseExact(date, format, new CultureInfo("pt-BR"), DateTimeStyles.None, out _))
+            {
+                return default;
+            }
+            DateTime dt = DateTime.Parse(date);
+            if(dt > DateTime.Now)
+            {
+                return default;
+            }
+            return dt;
         }
     }
 }
