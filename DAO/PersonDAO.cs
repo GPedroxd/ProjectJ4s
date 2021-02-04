@@ -21,11 +21,11 @@ namespace ProjectJ4s.DAO
                 throw new MongoException(e.Message);
             }
         }
-        public PersonDAO add(Person person)
+        public Person add(Person person)
         {
             try{
                 this.Tabela.InsertOne(person);
-                return this;
+                return person;
             }
             catch(MongoException e)
             {

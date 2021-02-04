@@ -22,7 +22,9 @@ namespace ProjectJ4s.Middlewares
             {
                 return null;
             }
-            person.Name = name; string formart = "dd/MM/yyyy";
+            person.Name = name.Trim();
+            dateBirth = dateBirth.Trim();
+            string formart = "dd/MM/yyyy";
             if (!DateTime.TryParseExact(dateBirth, formart, new CultureInfo("pt-br"),
                                                 DateTimeStyles.None, out _))
             {

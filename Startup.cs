@@ -43,7 +43,7 @@ namespace ProjectJ4s
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectJ4s v1"));
             }
-
+               
             app.UseHttpsRedirection();
 
             app.UseRouting();
